@@ -1,29 +1,19 @@
 import socket
 
-PORT = 5050
-SERVER = "145.108.73.134"
-ADDR = (SERVER, PORT)
-
-DISCONNECT_MESSAGE = "!DISCONNECT"
-
-
-
 
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect(ADDR)
 
+client.connect(('143.47.184.219', 5378))
 
-def send(msg):
-    message = msg.encode("utf-8")
-    msg_length = len(message)
-    send_length = str(msg_length).encode("utf-8")
-    send_length += b' ' * (2048 - len(send_length))
-    client.send(send_length)
-    client.send(message)
+done = False
 
+while not done:
+    msg_send = input() + '\n'
+    
+    client.send(msg_send.encode('utf-8'))
+    msg = client.recv(2048).decode('utf-8')
+    print(msg)
+    
 
-send("Hello")
-input()
-send(DISCONNECT_MESSAGE)
-input()
+client.close()
