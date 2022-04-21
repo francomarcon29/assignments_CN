@@ -2,13 +2,30 @@ import socket
 
 import threading
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-client.connect(('143.47.184.219', 5378))
 
 stop_thread = False
 
-def receive():
+
+
+def main():
+    response = 'IN-USE'
+    while response == 'IN-USE':
+        print('works')
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect(('143.47.184.219', 5378))
+        name = input("Insert name ")
+        handshake= "HELLO-FROM " + name + '\n'
+        client.sendall(handshake.encode("utf-8"))
+        response = client.recv(2048).decode("utf-8")
+        if response == 'IN-USE':
+            print(response)
+            client.close()
+        else:
+            print(response)
+            return
+
+
+'''def receive():
     while True:
         global stop_thread
         if stop_thread:
@@ -19,7 +36,6 @@ def receive():
             if 'IN-USE' in message:
                 client.close()
                 print(message)
-                flag = True
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.connect(('143.47.184.219', 5378))
                 
@@ -62,11 +78,13 @@ def write():
 receive_thread = threading.Thread(target=receive)
 receive_thread.start()
 
-flag = True
-
 write_thread = threading.Thread(target=write)
-write_thread.start()
+write_thread.start()'''
 
+main()
 
 #socket close
 #buffer dinamico
+
+#one thread for receive
+
