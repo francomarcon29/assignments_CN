@@ -3,8 +3,6 @@ import socket
 import threading
 
 
-
-
 def handshake():
     stop_loop = False
     while stop_loop == False:
@@ -50,21 +48,34 @@ def write(client_saved):
 
 
 def receive(client_saved):
-    message = ""
+    message = ''
     while True:
         try:
             temp = client_saved.recv(1).decode('utf-8')
             message = message + temp
             if message.endswith("\n"):
                 if message.startswith("WHO-OK"):
-                    print('Connected users: ')
-                    print([message[5:]])
+                    print('Connected users:')
+                    print(message[6:])
+                    message = ''
                 elif message.startswith("UNKNOWN"):
                     print('This user does not exit')
+                    message = ''
                 elif message.startswith('SEND-OK'):
-                    print(message)
-                #elif message.startswith('DELIVERY'):
-                #    print(message[8:])
+                    print('Message sent')
+                    message = ''
+                elif message.startswith('DELIVERY'):
+                    print(f'Message received from{message[8:]}')
+                    message = ''
+                elif message.startswith('BUSY'):
+                    print('The room is full, please connect later')
+                    message = ''
+                elif message.startswith('BAD-RQST-HDR'):
+                    print('There was an error while sending a message, try again')
+                    message = ''
+                elif message.startswith('BAD-RQST-BODY'):
+                    print('Message not accepted, try another one')
+                    message = ''
 
             
         except OSError as msg:
@@ -81,9 +92,3 @@ receive_thread = threading.Thread(target=receive, args= [client_saved], daemon=T
 receive_thread.start()
 
 write(client_saved)
-
-
-
-#socket close
-#buffer dinamico
-#one thread for receive
